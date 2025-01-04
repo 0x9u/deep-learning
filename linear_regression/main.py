@@ -50,6 +50,7 @@ class LinearRegression:
         )
 
     def train(self, data: str, epochs: int):
+        previous_loss = float("inf")
         for epoch in range(epochs):
             print(f"Epoch {epoch+1}")
             losses = []
@@ -65,11 +66,15 @@ class LinearRegression:
 
                     predicted = self.predict(inputs)
                     self.gradient_descent(inputs, predicted, actual)
-                    losses.append(self.cost(predicted, actual))
+                    loss = self.cost(predicted, actual)
+                    if loss < previous_loss:
+                        self.learning_rate *= 0.5
+                        previous_loss = loss
+                    losses.append(loss)
             print(f"Average loss: {np.mean(losses)}")
 
 
 if __name__ == "__main__":
-    model = LinearRegression(0.0000001)
+    model = LinearRegression(0.0001)
     model.train("data.csv", 10)
     print(f"Prediction {model.predict(2025)}")
